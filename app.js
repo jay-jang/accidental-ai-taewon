@@ -91,3 +91,22 @@ document.addEventListener('keydown',e=>{
  if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();scrollTo({top:scrollY+innerHeight*.82,behavior:'smooth'})}
  if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();scrollTo({top:scrollY-innerHeight*.82,behavior:'smooth'})}
 });
+
+const presenter=document.querySelector('#presenterPanel');
+const presenterBtn=document.querySelector('#presenterBtn');
+const closePresenter=document.querySelector('#closePresenter');
+presenterBtn.onclick=()=>{presenter.classList.toggle('on');presenter.setAttribute('aria-hidden',!presenter.classList.contains('on'))};
+closePresenter.onclick=()=>{presenter.classList.remove('on');presenter.setAttribute('aria-hidden','true')};
+document.querySelector('#fullscreenBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
+
+const timing=['0–5분','5–10분','10–18분','18–23분','23–27분','27–30분','30–33분','33–37분','37–42분','42–47분','47–54분','54–61분','61–67분','67–73분','73–78분','78–84분','84–90분','90–94분','94–97분','97–100분'];
+const slideObserver2=new IntersectionObserver(es=>es.forEach(e=>{
+ if(e.isIntersecting){
+   const i=slides.indexOf(e.target);
+   const kicker=e.target.querySelector('.kicker')?.textContent||'';
+   const title=e.target.querySelector('h1,h2,blockquote')?.textContent.trim().replace(/\s+/g,' ')||'';
+   document.querySelector('#presenterTitle').textContent=(kicker?kicker+' · ':'')+title.slice(0,70);
+   document.querySelector('#sectionTime').textContent=timing[i]||'';
+ }
+}),{threshold:.58});
+slides.forEach(s=>slideObserver2.observe(s));
