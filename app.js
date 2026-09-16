@@ -27,6 +27,35 @@ if(presenterToggle&&presenter){presenterToggle.onclick=()=>{const on=presenter.c
 const fullscreenBtn=document.querySelector('#fullscreenBtn');
 if(fullscreenBtn) fullscreenBtn.onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
 
+// Taewon High School mark — sourced from the NamuWiki page the lecturer referenced.
+// Microlink captures the logo element itself so the page does not depend on NamuWiki hot-linking rules.
+const crest=document.querySelector('.crest');
+if(crest){
+  const fallback=crest.textContent.trim()||'泰園';
+  const target='https://namu.wiki/w/%ED%83%9C%EC%9B%90%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90';
+  const encoded=encodeURIComponent(target);
+  const selector=encodeURIComponent('img[alt*="Taewon High School Logo"]');
+  const elementCapture=`https://api.microlink.io?url=${encoded}&screenshot.element=${selector}&meta=false&embed=screenshot.url`;
+  const metadataImage=`https://api.microlink.io?url=${encoded}&embed=image.url`;
+  const img=new Image();
+  img.alt='태원고등학교 교표';
+  img.referrerPolicy='no-referrer';
+  img.style.width='100%';
+  img.style.height='100%';
+  img.style.objectFit='contain';
+  img.style.display='block';
+  img.style.borderRadius='50%';
+  let triedMetadata=false;
+  img.onload=()=>{crest.textContent='';crest.style.padding='7px';crest.style.background='#fff';crest.appendChild(img);crest.title='태원고등학교 교표 · NamuWiki reference'};
+  img.onerror=()=>{
+    if(!triedMetadata){triedMetadata=true;img.src=metadataImage;return;}
+    crest.textContent=fallback;
+    crest.style.padding='';
+    crest.style.background='';
+  };
+  img.src=elementCapture;
+}
+
 // Career interest
 const interestMap={
  '만들기':'직업명보다 “무언가를 실제로 만드는 사람”이라는 정체성이 오래 간다.',
